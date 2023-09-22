@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace _Project._Scripts.Game
@@ -6,13 +7,17 @@ namespace _Project._Scripts.Game
 	{
 		[Header("Fields")]
 		[SerializeField] private float moveSpeed;
-		
-		[Header("References")]
-		[SerializeField] private Transform thisTransform;
 
 		private float _horizontal;
 		private float _vertical;
-		
+
+		private Transform _thisTransform;
+
+		private void Awake()
+		{
+			_thisTransform = transform;
+		}
+
 		private void Update()
 		{
 			GetMoveInput();
@@ -28,7 +33,7 @@ namespace _Project._Scripts.Game
 
 		private void MovePlayer()
 		{
-			thisTransform.position +=
+			_thisTransform.position +=
 				new Vector3(_horizontal, 0f, _vertical).normalized * (moveSpeed * Time.deltaTime);
 		}
 	}

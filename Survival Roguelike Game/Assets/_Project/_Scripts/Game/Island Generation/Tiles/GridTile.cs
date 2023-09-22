@@ -9,7 +9,7 @@ namespace _Project._Scripts.Game.Island_Generation.Tiles
         public bool Collapsed;
 
         public int PotentialTilesCount => PotentialTiles.Count;
-        public Vector3 WorldPosition { get; }
+        public Vector3 WorldPosition { get; set; }
         public List<TileType> PotentialTiles { get; set; }
 
         public List<TileType> PotentialTilesCopy
@@ -37,7 +37,24 @@ namespace _Project._Scripts.Game.Island_Generation.Tiles
         public void Collapse()
         {
             TileType tileType = PotentialTiles[Random.Range(0, PotentialTiles.Count)];
+            for (int i = 0; i < GridGenerator.Instance.CollapseWeight; i++)
+            {
+                tileType = PotentialTiles[Random.Range(0, PotentialTiles.Count)];
+
+                if (tileType != TileType.Water_2 && tileType != TileType.Water_1 &&
+                    tileType != TileType.Dirt_2 && tileType != TileType.Dirt_1)
+                    break;
+            }
             
+            PotentialTiles.Clear();
+            
+            PotentialTiles.Add(tileType);
+            
+            Collapsed = true;
+        }
+
+        public void Collapse(TileType tileType)
+        {
             PotentialTiles.Clear();
             
             PotentialTiles.Add(tileType);
