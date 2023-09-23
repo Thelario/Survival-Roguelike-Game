@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using _Project._Scripts.Game.Island_Generation.Tiles;
 using Game.Managers;
 using TMPro;
@@ -30,6 +31,7 @@ namespace _Project._Scripts.Game.Island_Generation
 
 		[Header("Wfc Solver Animation")]
 		[SerializeField] private bool animateWfcSolver;
+		[SerializeField] private bool animateIslandPopulation;
 		[SerializeField] private float animationTime;
 
 		[Header("Props")]
@@ -63,26 +65,28 @@ namespace _Project._Scripts.Game.Island_Generation
 
 		private void GenerateIsland()
 		{
-			_collapseWeight = Random.Range(minCollapseWeight, maxCollapseWeight);
-			_findCellWithLowestEntropyCounter = Random.Range(minAmountOfTilesToInitiallyCollapse, maxAmountOfTilesToInitiallyCollapse);
-			
 			DestroyPreviousIsland();
 
 			ConfigureGrid();
 
 			CreateGrid();
 
-			StartCoroutine(Solve());
+			StartCoroutine(nameof(Solve));
 		}
 
 		private void DestroyPreviousIsland()
 		{
 			foreach (Transform child in islandParent)
 				Destroy(child.gameObject);
+
+			DestroyPreviousProps();
 		}
 
 		private void ConfigureGrid()
 		{
+			_collapseWeight = Random.Range(minCollapseWeight, maxCollapseWeight);
+			_findCellWithLowestEntropyCounter = Random.Range(minAmountOfTilesToInitiallyCollapse, maxAmountOfTilesToInitiallyCollapse);
+			
 			_hexWidth = 1f;
 			_hexSize = _hexWidth / (Mathf.Sqrt(3));
 			_hexHeight = _hexSize * 2f;
@@ -139,8 +143,8 @@ namespace _Project._Scripts.Game.Island_Generation
 			}
 			
 			FillGrid(true);
-			
-			PopulateIslandWithTreesAndRocks();
+
+			yield return PopulateIslandWithTreesAndRocks();
 		}
 
 		private IEnumerator Propagate(GridTile currentCell)
@@ -495,79 +499,84 @@ namespace _Project._Scripts.Game.Island_Generation
 				}
 			}
 		}
+		
+		#region Island Population
 
-		private void PopulateIslandWithTreesAndRocks()
+		private int GetAmountOfTilesInGrid(TileType[] tileTypesToCheck)
 		{
-			DestroyPreviousProps();
+			int amount = 0;
 			
-			if (!generateProps)
-				return;
+			for (int i = 0; i < maxWidth; i++)
+			{
+				for (int j = 0; j < maxHeight; j++)
+				{
+					if (!tileTypesToCheck.Contains(_tiles[i, j].PotentialTiles[0]))
+						continue;
 
-			int x, y;
+					amount++;
+				}
+			}
 
-			int amount = Random.Range(minAmountOfTrees, maxAmountOfTrees);
-
+			return amount;
+		}
+		
+		private IEnumerator PopulateIslandWithTreesAndRocks()
+		{
+			if (!generateProps) 
+				yield break;
+			
 			List<Vector2Int> usedPositions = new List<Vector2Int>();
 
-			for (int i = 0; i < amount; i++)
-			{
-				do
-				{
-					x = Random.Range(3, maxWidth - 3);
-					y = Random.Range(3, maxHeight - 3);
-				}
-				while (_tiles[x, y].PotentialTiles[0] != TileType.Grass_1 &&
-				       _tiles[x, y].PotentialTiles[0] != TileType.Grass_2 &&
-				       usedPositions.Contains(new Vector2Int(x, y)));
+			yield return InstantiateRandomProps(minAmountOfTrees, maxAmountOfTrees, usedPositions,
+				TileType.Grass_1, TileType.Grass_2, trees);
+			
+			yield return InstantiateRandomProps(minAmountOfDirtTrees, maxAmountOfDirtTrees, usedPositions,
+				TileType.Dirt_1, TileType.Dirt_2, dirtTrees);
 
-				Instantiate(trees[Random.Range(0, trees.Length)], 
-					_tiles[x, y].WorldPosition + new Vector3(0f, .1f),
-					Quaternion.identity,
-					propsParent);
-				
-				usedPositions.Add(new Vector2Int(x, y));
+			yield return InstantiateRandomProps(minAmountOfDirtRocks, maxAmountOfDirtRocks, usedPositions,
+				TileType.Dirt_1, TileType.Dirt_2, rocks);
+		}
+
+		private IEnumerator InstantiateRandomProps(int min, int max, List<Vector2Int> usedPositions,
+			TileType conditionOne, TileType conditionTwo, GameObject[] props)
+		{
+			int numberOfTiles = GetAmountOfTilesInGrid(new[] { conditionOne, conditionTwo });
+			if (numberOfTiles < min)
+			{
+				min = numberOfTiles / 2;
+				max = numberOfTiles;
 			}
 			
-			amount = Random.Range(minAmountOfDirtTrees, maxAmountOfDirtTrees);
+			int x, y;
+			int amount = Random.Range(min, max);
+			Vector2Int newPos;
 			
 			for (int i = 0; i < amount; i++)
 			{
-				do
+				while (true)
 				{
 					x = Random.Range(0, maxWidth);
 					y = Random.Range(0, maxHeight);
+					
+					newPos = new Vector2Int(x, y);
+					
+					if (usedPositions.Contains(newPos))
+						continue;
+
+					if (_tiles[x, y].PotentialTiles[0] == conditionOne ||
+					    _tiles[x, y].PotentialTiles[0] == conditionTwo)
+						break;
 				}
-				while (_tiles[x, y].PotentialTiles[0] != TileType.Dirt_1 &&
-				         _tiles[x, y].PotentialTiles[0] != TileType.Dirt_2 &&
-				         usedPositions.Contains(new Vector2Int(x, y)));
+
+				if (animateIslandPopulation)
+					yield return new WaitForSeconds(animationTime);
 				
-				Instantiate(dirtTrees [Random.Range(0, dirtTrees.Length)],
-					_tiles[x, y].WorldPosition + new Vector3(0f, .1f),
-					Quaternion.identity,
-					propsParent);
-				
-				usedPositions.Add(new Vector2Int(x, y));
-			}
-			
-			amount = Random.Range(minAmountOfDirtRocks, maxAmountOfDirtRocks);
-			
-			for (int i = 0; i < amount; i++)
-			{
-				do
-				{
-					x = Random.Range(0, maxWidth);
-					y = Random.Range(0, maxHeight);
-				}
-				while (_tiles[x, y].PotentialTiles[0] != TileType.Dirt_1 &&
-				         _tiles[x, y].PotentialTiles[0] != TileType.Dirt_2 &&
-				         usedPositions.Contains(new Vector2Int(x, y)));
-				
-				Instantiate(rocks[Random.Range(0, rocks.Length)],
+				Instantiate(props[Random.Range(0, props.Length)],
 					_tiles[x, y].WorldPosition  + new Vector3(0f, .1f), 
 					Quaternion.identity,
 					propsParent);
 				
-				usedPositions.Add(new Vector2Int(x, y));
+				usedPositions.Add(newPos);
 			}
 		}
 
@@ -579,5 +588,7 @@ namespace _Project._Scripts.Game.Island_Generation
 			foreach (Transform prop in propsParent)
 				Destroy(prop.gameObject);
 		}
+		
+		#endregion
 	}
 }

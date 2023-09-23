@@ -594,31 +594,30 @@ MonoBehaviour:
   debugTextPrefab: {fileID: 8128271061221925550, guid: 291279270bfbf4a4e869d38e2e51604b,
     type: 3}
   animateWfcSolver: 1
+  animateIslandPopulation: 1
   animationTime: 0.01
-  generateProps: 0
+  generateProps: 1
   propsParent: {fileID: 816416713}
-  maxAmountOfTrees: 18
-  minAmountOfTrees: 22
+  maxAmountOfTrees: 40
+  minAmountOfTrees: 20
   trees:
-  - {fileID: 7158047669201165387, guid: 2ecf533c297ba8e4084f2176e96b472a, type: 3}
-  - {fileID: 2684078534924157110, guid: 964dbe5d8c1f9ca4bb6f209d1aa63122, type: 3}
-  - {fileID: 5930357064907615184, guid: 9e1bf308b617aea4daa4bee2af3393a1, type: 3}
-  - {fileID: 2176772990651470792, guid: 03476e1a01d2ec84c9f46a5d12d9d50c, type: 3}
-  - {fileID: 8818514724027217034, guid: c03cff4b83879084f951887ef6d13a0e, type: 3}
-  maxAmountOfDirtTrees: 5
+  - {fileID: 3360124221118554019, guid: 0bd5b958995b955479075023c3a0e9a7, type: 3}
+  - {fileID: 5582924710559899980, guid: 924f7506f1a522f408fcb8e51f118720, type: 3}
+  - {fileID: 5584495936006081601, guid: d3231e720e9b5a54a89bd1d8c4904fa8, type: 3}
+  maxAmountOfDirtTrees: 30
   minAmountOfDirtTrees: 10
   dirtTrees:
+  - {fileID: 7142351805888934407, guid: 520d43c14f31ce140bed24c58cd54d8d, type: 3}
+  - {fileID: 984443878089006296, guid: df32373c03fa3c947b330818afc32cc5, type: 3}
+  - {fileID: 4307973104011742594, guid: ebf78b8869be0d045a4a2e071a8bb841, type: 3}
   - {fileID: 7157382873344740128, guid: a976b1da8a8d6ee4ba3981415c3baa25, type: 3}
   - {fileID: 3960216807295088038, guid: 2bf84c9c03500e548b557242a6270255, type: 3}
-  - {fileID: 4307973104011742594, guid: ebf78b8869be0d045a4a2e071a8bb841, type: 3}
-  - {fileID: 984443878089006296, guid: df32373c03fa3c947b330818afc32cc5, type: 3}
-  - {fileID: 7142351805888934407, guid: 520d43c14f31ce140bed24c58cd54d8d, type: 3}
-  maxAmountOfDirtRocks: 10
-  minAmountOfDirtRocks: 15
+  maxAmountOfDirtRocks: 40
+  minAmountOfDirtRocks: 20
   rocks:
-  - {fileID: 2301677329824341300, guid: cd7a4d175a6650c4aa8ae6f963b16335, type: 3}
-  - {fileID: 9129432034076486047, guid: e65d5043a30152541a382e7483c73d01, type: 3}
-  - {fileID: 3875169940982402527, guid: 1a99e31753be6a24e928eb083abac768, type: 3}
+  - {fileID: 8209591809367058442, guid: 01c25d6394075ad4ba8e1201f86cc5ca, type: 3}
+  - {fileID: 23216442938982956, guid: 5aabe6a6d760b9a47afa7a6110418f37, type: 3}
+  - {fileID: 7326554111398337744, guid: 795cf86ad0f4309409ab5e0db4a15dae, type: 3}
 --- !u!1 &1498763048
 GameObject:
   m_ObjectHideFlags: 0

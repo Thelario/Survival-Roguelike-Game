@@ -13,6 +13,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dirt Deep
       objectReference: {fileID: 0}
+    - target: {fileID: 7279823670578977452, guid: e4278466de3189b449333fbab4e2c2ae,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7947993122416836630, guid: e4278466de3189b449333fbab4e2c2ae,
         type: 3}
       propertyPath: m_RootOrder
@@ -66,6 +71,11 @@ PrefabInstance:
     - target: {fileID: 7947993122416836630, guid: e4278466de3189b449333fbab4e2c2ae,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9081470710592355193, guid: e4278466de3189b449333fbab4e2c2ae,
+        type: 3}
+      propertyPath: m_CastShadows
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9081470710592355193, guid: e4278466de3189b449333fbab4e2c2ae,
