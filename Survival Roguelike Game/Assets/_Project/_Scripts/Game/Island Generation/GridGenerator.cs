@@ -18,35 +18,31 @@ namespace _Project._Scripts.Game.Island_Generation
 		[SerializeField] private Transform islandParent;
 		[SerializeField] private TilesManager tilesManager;
 
-		[Header("Constraints")]
-		[SerializeField] private int maxCollapseWeight;
-		[SerializeField] private int minCollapseWeight;
-		[SerializeField] private int maxAmountOfTilesToInitiallyCollapse;
-		[SerializeField] private int minAmountOfTilesToInitiallyCollapse;
-		
 		[Header("Debugging")] 
 		[SerializeField] private bool createDebugTexts;
 		[SerializeField] private Transform debugTextsParent;
 		[SerializeField] private GameObject debugTextPrefab;
 
-		[Header("Wfc Solver Animation")]
-		[SerializeField] private bool animateWfcSolver;
-		[SerializeField] private bool animateIslandPopulation;
-		[SerializeField] private float animationTime;
-
 		[Header("Props")]
-		[SerializeField] private bool generateProps;
 		[SerializeField] private Transform propsParent;
-		[SerializeField] private int maxAmountOfTrees;
-		[SerializeField] private int minAmountOfTrees;
 		[SerializeField] private GameObject[] trees;
-		[SerializeField] private int maxAmountOfDirtTrees;
-		[SerializeField] private int minAmountOfDirtTrees;
 		[SerializeField] private GameObject[] dirtTrees;
-		[SerializeField] private int maxAmountOfDirtRocks;
-		[SerializeField] private int minAmountOfDirtRocks;
 		[SerializeField] private GameObject[] rocks;
 
+		public float AnimationTime { get; set; }
+		public bool AnimateWfcSolver { get; set; }
+		public bool AnimateIslandPopulation { get; set; }
+		public int MaxCollapseWeight { get; set; }
+		public int MinCollapseWeight { get; set; }
+		public int MaxAmountOfTilesToInitiallyCollapse { get; set; }
+		public int MinAmountOfTilesToInitiallyCollapse { get; set; }
+		public int MaxAmountOfTrees { get; set; }
+		public int MinAmountOfTrees { get; set; }
+		public int MaxAmountOfDirtTrees { get; set; }
+		public int MinAmountOfDirtTrees { get; set; }
+		public int MaxAmountOfDirtRocks { get; set; }
+		public int MinAmountOfDirtRocks { get; set; }
+		
 		private int _collapseWeight;
 		private int _findCellWithLowestEntropyCounter;
 		private float _hexSize;
@@ -57,14 +53,10 @@ namespace _Project._Scripts.Game.Island_Generation
 
 		public int CollapseWeight => _collapseWeight;
 
-		private void Update()
+		public void GenerateIsland()
 		{
-			if (Input.GetKeyDown(KeyCode.Space))
-				GenerateIsland();
-		}
-
-		private void GenerateIsland()
-		{
+			print("Starting");
+			
 			DestroyPreviousIsland();
 
 			ConfigureGrid();
@@ -84,8 +76,8 @@ namespace _Project._Scripts.Game.Island_Generation
 
 		private void ConfigureGrid()
 		{
-			_collapseWeight = Random.Range(minCollapseWeight, maxCollapseWeight);
-			_findCellWithLowestEntropyCounter = Random.Range(minAmountOfTilesToInitiallyCollapse, maxAmountOfTilesToInitiallyCollapse);
+			_collapseWeight = Random.Range(MinCollapseWeight, MaxCollapseWeight);
+			_findCellWithLowestEntropyCounter = Random.Range(MinAmountOfTilesToInitiallyCollapse, MaxAmountOfTilesToInitiallyCollapse);
 			
 			_hexWidth = 1f;
 			_hexSize = _hexWidth / (Mathf.Sqrt(3));
@@ -154,10 +146,10 @@ namespace _Project._Scripts.Game.Island_Generation
 			Stack<GridTile> pendingGridTiles = new Stack<GridTile>();
 			pendingGridTiles.Push(currentCell);
 			
-			if (animateWfcSolver)
+			if (AnimateWfcSolver)
 			{
 				FillGrid(false);
-				yield return new WaitForSeconds(animationTime);
+				yield return new WaitForSeconds(AnimationTime);
 			}
 
 			// 3.2. We loop while there are pending grid tiles in the stack
@@ -218,10 +210,10 @@ namespace _Project._Scripts.Game.Island_Generation
 			foreach (GridTile gridTile in currentCells)
 				pendingGridTiles.Push(gridTile);
 			
-			if (animateWfcSolver)
+			if (AnimateWfcSolver)
 			{
 				FillGrid(false);
-				yield return new WaitForSeconds(animationTime);
+				yield return new WaitForSeconds(AnimationTime);
 			}
 
 			// 3.2. We loop while there are pending grid tiles in the stack
@@ -522,18 +514,15 @@ namespace _Project._Scripts.Game.Island_Generation
 		
 		private IEnumerator PopulateIslandWithTreesAndRocks()
 		{
-			if (!generateProps) 
-				yield break;
-			
 			List<Vector2Int> usedPositions = new List<Vector2Int>();
 
-			yield return InstantiateRandomProps(minAmountOfTrees, maxAmountOfTrees, usedPositions,
+			yield return InstantiateRandomProps(MinAmountOfTrees, MaxAmountOfTrees, usedPositions,
 				TileType.Grass_1, TileType.Grass_2, trees);
 			
-			yield return InstantiateRandomProps(minAmountOfDirtTrees, maxAmountOfDirtTrees, usedPositions,
+			yield return InstantiateRandomProps(MinAmountOfDirtTrees, MaxAmountOfDirtTrees, usedPositions,
 				TileType.Dirt_1, TileType.Dirt_2, dirtTrees);
 
-			yield return InstantiateRandomProps(minAmountOfDirtRocks, maxAmountOfDirtRocks, usedPositions,
+			yield return InstantiateRandomProps(MinAmountOfDirtRocks, MaxAmountOfDirtRocks, usedPositions,
 				TileType.Dirt_1, TileType.Dirt_2, rocks);
 		}
 
@@ -568,8 +557,8 @@ namespace _Project._Scripts.Game.Island_Generation
 						break;
 				}
 
-				if (animateIslandPopulation)
-					yield return new WaitForSeconds(animationTime);
+				if (AnimateIslandPopulation)
+					yield return new WaitForSeconds(AnimationTime);
 				
 				Instantiate(props[Random.Range(0, props.Length)],
 					_tiles[x, y].WorldPosition  + new Vector3(0f, .1f), 
