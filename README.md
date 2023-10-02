@@ -1,2 +1,2 @@
-# Survival-Roguelike-Game
-Repository for my next game, a mix between the survival and the rogue-like genre heavily inspired by Frostpunk &amp; Don't Starve.
+# Procedural Island Generator
+My goal with this project has been to learn about how to implement the Wave Function Collapse (WFC) algorithm.
